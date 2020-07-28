@@ -1,5 +1,5 @@
 // const webshot = require('webshot') //https://www.npmjs.com/package/webshot-node
-// var fs = require('fs')
+var fs = require('fs')
 
 const Discord = require('discord.js')
 const bot = new Discord.Client()
@@ -9,30 +9,7 @@ const token = auth.token
 
 const PREFIX = '!'
 
-var options = {
-    captureSelector : ".item-list__body.item-list__body--gear",
-    delay: 30,
-//     screenSize: {
-//       width: 320
-//     , height: 480
-//     }
-//   , shotSize: {
-//       width: 320
-//     , height: 'all'
-//     }
-//   , userAgent: 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_2 like Mac OS X; en-us)'
-//       + ' AppleWebKit/531.21.20 (KHTML, like Gecko) Mobile/7B298g'
-  };
-
-var webshot = require('webshot-node');
-// webshot('google.com', 'google.png', function(err) {
-//     if(!err) {
-//             console.log('Screenshot taken!')
-//         }
-// });
-var fs      = require('fs');
-let fileName = 'google.png'
-
+const puppeteer = require('puppeteer');
 
 const exampleEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
@@ -67,16 +44,40 @@ bot.on('message', message => {
 
     switch(args[0]) {
         case 'ping':
-            webshot('google.com', 'google.png',  (err) => { /* , selector = ".item-list__body", delay = 0.5 */
+            (async () => {
+                const browser = await puppeteer.launch();
+                const page = await browser.newPage();
+                await page.setViewport({ width: 1920, height: 1280 }) 
+              
+                await page.goto('https://albiononline.com/en/killboard/kill/103773175');
+                await page.waitForSelector(".end .item-list__body .item--MainHand img")
+                setTimeout(async () => { 
+                  await page.screenshot({
+                      path: 'example.png',
+                  //   fullPage: false,
+                      clip: {
+                          x: 1060,
+                          y: 490,
+                          width: 430,
+                          height: 550
+                      }
+                  });
+                  await browser.close();
+                    message.channel.send(exampleEmbed);
+                    message.channel.send('pong!', {files : ["./example.png"]}) // NO TAG
+                    // fs.unlink('example.png')
+                    setTimeout(async () => { 
+                        fs.unlink('example.png', (err) => {
+                            if (err) {
+                                throw err;
+                            }
+                            console.log("File is deleted.");
+                        });
+                    }, 2000)
+                  }, 5000)
+              })();
                 bot.channels.cache.get('737744651498291308').send('Hello here!') // CHOOSE CHANNEL + NO TAG
-                message.channel.send('pong!', {files : ["./google.png"]}) // NO TAG
-                message.channel.send(exampleEmbed);
-            })
-            // fs.readFile(`google.png`, (err, data)=>{
-            //     if(!err) {
-            //         message.channel.send('pong!', {files : ["./google.png"]}) // NO TAG
-            //     }
-            // })
+                
             break;
     }
 

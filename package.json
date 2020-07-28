@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.2.0",
-    "webshot-node": "^0.18.2"
+    "puppeteer": "^5.2.1"
   },
   "devDependencies": {}
 }
