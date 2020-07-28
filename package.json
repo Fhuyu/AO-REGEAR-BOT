@@ -9,6 +9,8 @@
   "author": "Fuyuh",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.2.0"
-  }
+    "discord.js": "^12.2.0",
+    "webshot-node": "^0.18.2"
+  },
+  "devDependencies": {}
 }
